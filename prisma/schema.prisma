@@ -23,12 +23,12 @@ model User{
 
 model UserProfile {
   id Int @id @default(autoincrement())
-  nama String
-  no_hp String
-  tanggal_lahir DateTime
-  alamat String
-  userId Int @unique
-  user User @relation(fields: [userId], references: [id])
+  nama String?
+  no_hp String?
+  tanggal_lahir DateTime?
+  alamat String?
+  user_id Int @unique
+  user User @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
