@@ -2,6 +2,8 @@ import express, { Express } from "express";
 import session from "express-session";
 import passport from "./config/passport";
 
+import userRoute from "./routes/userRoute";
+
 const app: Express = express();
 const port = 3000;
 
@@ -18,6 +20,8 @@ app.use(
 
 app.use(passport.initialize()); // inisialisasi passport di express
 app.use(passport.session()); // mengelola otentikasi passport berbasis sesi
+
+app.use("/api", userRoute);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
