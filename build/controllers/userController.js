@@ -21,10 +21,13 @@ class UserController {
                 // validasi: jika user tidak berhasil register
                 // user => data user yang berhasil register
                 if (!user) {
-                    return res.status(500).json({
-                        status: "error",
-                        message: "User sudah ada",
-                    });
+                    // pesan kesalahan / informasi tambahan ketika otentikasi
+                    if (info) {
+                        return res.status(401).json({
+                            status: "error",
+                            message: info.message,
+                        });
+                    }
                 }
                 // response success
                 return res.status(201).json({
@@ -48,6 +51,7 @@ class UserController {
                 // validasi: jika user tidak berhasil login
                 // user => data user yang berhasil login
                 if (!user) {
+                    // pesan kesalahan / informasi tambahan ketika otentikasi
                     if (info) {
                         return res.status(401).json({
                             status: "error",

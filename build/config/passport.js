@@ -16,6 +16,7 @@ const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const validator_1 = __importDefault(require("validator"));
 const prisma = new client_1.PrismaClient();
 // serialisasi
 passport_1.default.serializeUser((user, done) => {
@@ -70,6 +71,10 @@ passport_1.default.use("local-register", new passport_local_1.Strategy({
     passwordField: "password",
     passReqToCallback: true,
 }, (req, email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
+    // validasi: apakah email valid
+    if (!validator_1.default.isEmail(email)) {
+        return done(null, false, { message: "Email tidak valid" });
+    }
     // cek user di db
     const existingUser = yield prisma.user.findUnique({
         where: {

@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import validator from "validator";
 
 const prisma = new PrismaClient();
 
@@ -74,6 +75,11 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
+      // validasi: apakah email valid
+      if (!validator.isEmail(email)) {
+        return done(null, false, { message: "Email tidak valid" });
+      }
+
       // cek user di db
       const existingUser = await prisma.user.findUnique({
         where: {
