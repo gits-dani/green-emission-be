@@ -30,16 +30,16 @@ passport.use(
   "local-login",
   new Strategy(
     {
-      usernameField: "username",
+      usernameField: "email",
       passwordField: "password",
       passReqToCallback: true,
     },
-    async (req, username, password, done) => {
+    async (req, email, password, done) => {
       try {
         // cek user berdasarkan username
         const user = await prisma.user.findUnique({
           where: {
-            username,
+            email,
           },
         });
 
@@ -69,15 +69,15 @@ passport.use(
   "local-register",
   new Strategy(
     {
-      usernameField: "username",
+      usernameField: "email",
       passwordField: "password",
       passReqToCallback: true,
     },
-    async (req, username, password, done) => {
+    async (req, email, password, done) => {
       // cek user di db
       const existingUser = await prisma.user.findUnique({
         where: {
-          username,
+          email,
         },
       });
 
@@ -92,7 +92,7 @@ passport.use(
 
       const newUser = await prisma.user.create({
         data: {
-          username,
+          email,
           password: hashPassword,
         },
       });

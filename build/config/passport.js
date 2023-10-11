@@ -37,15 +37,15 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
 }));
 // strategy local-login
 passport_1.default.use("local-login", new passport_local_1.Strategy({
-    usernameField: "username",
+    usernameField: "email",
     passwordField: "password",
     passReqToCallback: true,
-}, (req, username, password, done) => __awaiter(void 0, void 0, void 0, function* () {
+}, (req, email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // cek user berdasarkan username
         const user = yield prisma.user.findUnique({
             where: {
-                username,
+                email,
             },
         });
         // validasi: jika user tidak ditemukan
@@ -66,14 +66,14 @@ passport_1.default.use("local-login", new passport_local_1.Strategy({
 })));
 // strategy local-register
 passport_1.default.use("local-register", new passport_local_1.Strategy({
-    usernameField: "username",
+    usernameField: "email",
     passwordField: "password",
     passReqToCallback: true,
-}, (req, username, password, done) => __awaiter(void 0, void 0, void 0, function* () {
+}, (req, email, password, done) => __awaiter(void 0, void 0, void 0, function* () {
     // cek user di db
     const existingUser = yield prisma.user.findUnique({
         where: {
-            username,
+            email,
         },
     });
     // validasi: jika user sudah ada
@@ -85,7 +85,7 @@ passport_1.default.use("local-register", new passport_local_1.Strategy({
     const hashPassword = yield bcrypt_1.default.hash(password, salt);
     const newUser = yield prisma.user.create({
         data: {
-            username,
+            email,
             password: hashPassword,
         },
     });

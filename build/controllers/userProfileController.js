@@ -22,40 +22,52 @@ class UserProfileController {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // Ambil data dari req.body
-                const { nama, no_hp, tanggal_lahir, alamat } = req.body;
-                const user_id = parseInt(req.body.user_id);
+                const { nama, no_hp, tanggal_lahir, alamat, user_id } = req.body;
                 const tanggal_lahir_iso = (0, dayjs_1.default)(tanggal_lahir).toISOString();
-                // Cari userProfile berdasarkan user_id
-                const userProfile = yield this.prisma.userProfile.findUnique({
+                // Cari user di database
+                const user = yield this.prisma.user.findUnique({
                     where: {
                         id: user_id,
                     },
                 });
-                // buat object user profile
+                // Validasi: jika user tidak ditemukan
+                if (!user) {
+                    return res
+                        .status(404)
+                        .json({ status: "error", message: "User tidak ditemukan" });
+                }
+                // Cari userProfile berdasarkan user_id
+                const userProfile = yield this.prisma.userProfile.findUnique({
+                    where: {
+                        user_id: user_id,
+                    },
+                });
+                // Buat object user profile
                 const newUserProfile = {
                     nama: nama || (userProfile === null || userProfile === void 0 ? void 0 : userProfile.nama) || "",
                     no_hp: no_hp || (userProfile === null || userProfile === void 0 ? void 0 : userProfile.no_hp) || "",
                     tanggal_lahir: tanggal_lahir_iso || (userProfile === null || userProfile === void 0 ? void 0 : userProfile.tanggal_lahir) || "",
                     alamat: alamat || (userProfile === null || userProfile === void 0 ? void 0 : userProfile.alamat) || "",
-                    user: {
-                        connect: {
-                            id: user_id, // menghubungkan dengan tabel user
-                        },
-                    },
                 };
-                // validasi: jika user profile belum ada maka tambah data
-                if (!userProfile) {
-                    yield this.prisma.userProfile.create({
+                if (userProfile) {
+                    // Jika userProfile sudah ada, update data saja
+                    yield this.prisma.userProfile.update({
                         data: newUserProfile,
+                        where: {
+                            user_id: user_id,
+                        },
                     });
                 }
-                // jika user profile sudah ada maka update data saja
-                yield this.prisma.userProfile.update({
-                    data: newUserProfile,
-                    where: {
-                        id: user_id,
-                    },
-                });
+                else {
+                    // Jika userProfile belum ada, tambahkan data baru
+                    yield this.prisma.userProfile.create({
+                        data: Object.assign(Object.assign({}, newUserProfile), { user: {
+                                connect: {
+                                    id: user_id,
+                                },
+                            } }),
+                    });
+                }
                 // Response sukses
                 return res.status(201).json({
                     status: "success",
@@ -63,9 +75,11 @@ class UserProfileController {
                 });
             }
             catch (error) {
+                // Tangani kesalahan
+                console.error(error);
                 return res.status(500).json({
                     status: "error",
-                    message: error.message,
+                    message: "Terjadi kesalahan internal",
                 });
             }
         });
