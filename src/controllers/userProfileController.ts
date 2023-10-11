@@ -28,7 +28,7 @@ class UserProfileController {
 
       // buat object user profile
       const newUserProfile = {
-        nama: nama || userProfile?.nama || "", // Gunakan nilai default jika tidak ada data baru
+        nama: nama || userProfile?.nama || "", // kalau nama ada pake nama, sisanya ga di pake
         no_hp: no_hp || userProfile?.no_hp || "",
         tanggal_lahir: tanggal_lahir_iso || userProfile?.tanggal_lahir || "",
         alamat: alamat || userProfile?.alamat || "",
