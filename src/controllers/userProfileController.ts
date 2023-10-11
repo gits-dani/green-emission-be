@@ -97,6 +97,38 @@ class UserProfileController {
       });
     }
   };
+
+  get = async (req: Request, res: Response) => {
+    try {
+      // ambil data user_id dari req.body
+      const user_id = parseInt(req.body.user_id);
+
+      // cek user profile berdasarkan user_id
+      const userProfile = await this.prisma.userProfile.findUnique({
+        where: {
+          user_id,
+        },
+      });
+
+      // validasi: jika user profile tidak ada
+      if (!userProfile) {
+        return res
+          .status(404)
+          .json({ status: "error", message: "User Profile tidak ditemukan" });
+      }
+
+      // berikan response success
+      return res.json({
+        status: "success",
+        message: "Berhasil mengambil data user profile",
+        userProfile,
+      });
+
+      // prosses ambil user profile berdasarkan id
+    } catch (error: any) {
+      return res.status(500).json({ status: "error", message: error.message });
+    }
+  };
 }
 
 export default new UserProfileController();

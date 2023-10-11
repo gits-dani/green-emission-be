@@ -7,4 +7,5 @@ const express_1 = require("express");
 const userProfileController_1 = __importDefault(require("../controllers/userProfileController"));
 const route = (0, express_1.Router)();
 route.post("/userProfile", userProfileController_1.default.add);
+route.get("/userProfile", userProfileController_1.default.get);
 exports.default = route;
