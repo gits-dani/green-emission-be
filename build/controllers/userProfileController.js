@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const dayjs_1 = __importDefault(require("dayjs"));
+const validator_1 = __importDefault(require("validator"));
 class UserProfileController {
     constructor() {
         // tambah user profile
@@ -21,10 +22,8 @@ class UserProfileController {
         // -> jika sudah ada user profile berdasarkan user_id, maka update saja data user profilenya
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                // Ambil data dari req.body
-                const { nama, no_hp, tanggal_lahir, alamat, user_id } = req.body;
-                // convert ke format ISO (2023-08-27)
-                const tanggal_lahir_iso = (0, dayjs_1.default)(tanggal_lahir).toISOString();
+                // ambil data user_id;
+                const user_id = parseInt(req.body.user_id);
                 // Cari user di database
                 const user = yield this.prisma.user.findUnique({
                     where: {
@@ -33,9 +32,10 @@ class UserProfileController {
                 });
                 // Validasi: jika user tidak ditemukan
                 if (!user) {
-                    return res
-                        .status(404)
-                        .json({ status: "error", message: "User tidak ditemukan" });
+                    return res.status(404).json({
+                        status: "error",
+                        message: "User tidak ditemukan",
+                    });
                 }
                 // Cari userProfile berdasarkan user_id
                 const userProfile = yield this.prisma.userProfile.findUnique({
@@ -43,6 +43,17 @@ class UserProfileController {
                         user_id,
                     },
                 });
+                // Ambil data dari req.body
+                const { nama, no_hp, tanggal_lahir, alamat } = req.body;
+                // convert ke format ISO (2023-08-27)
+                const tanggal_lahir_iso = (0, dayjs_1.default)(tanggal_lahir).toISOString();
+                // validasi: apakah no_hp valid
+                if (!validator_1.default.isMobilePhone(no_hp, "id-ID")) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "No Hp tidak valid",
+                    });
+                }
                 // Buat object user profile
                 const newUserProfile = {
                     nama: nama || (userProfile === null || userProfile === void 0 ? void 0 : userProfile.nama) || "",
