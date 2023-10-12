@@ -63,15 +63,22 @@ class UserProfileController {
 
       if (userProfile) {
         // Jika userProfile sudah ada, update data saja
-        await this.prisma.userProfile.update({
+        const updateUserProfile = await this.prisma.userProfile.update({
           data: newUserProfile,
           where: {
             user_id,
           },
         });
+
+        // Response sukses
+        return res.status(201).json({
+          status: "success",
+          message: "Berhasil menambahkan user profile",
+          userProfileId: updateUserProfile.id,
+        });
       } else {
         // Jika userProfile belum ada, tambahkan data baru
-        await this.prisma.userProfile.create({
+        const createUserProfile = await this.prisma.userProfile.create({
           data: {
             ...newUserProfile, // Menggabungkan properti dari newUserProfile
             user: {
@@ -81,13 +88,14 @@ class UserProfileController {
             },
           },
         });
-      }
 
-      // Response sukses
-      return res.status(201).json({
-        status: "success",
-        message: "Berhasil menambahkan user profile",
-      });
+        // Response sukses
+        return res.status(201).json({
+          status: "success",
+          message: "Berhasil menambahkan user profile",
+          userProfileId: createUserProfile.id,
+        });
+      }
     } catch (error) {
       // Tangani kesalahan
       console.error(error);

@@ -1,10 +1,20 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("../config/passport"));
 const client_1 = require("@prisma/client");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 class UserController {
     constructor() {
         this.register = (req, res, next) => {
@@ -91,6 +101,78 @@ class UserController {
                 return res.json({ status: "success", message: "Logout berhasil" });
             });
         };
+        this.changePassword = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id user
+                const id = parseInt(req.body.id);
+                // validasi: jika tidak mengirimkan id
+                if (!id) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Data id harus diisi",
+                    });
+                }
+                // cek user berdasarkan id
+                const user = yield this.prisma.user.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+                // validasi: jika user tidak ada
+                if (!user) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "User tidak ditemukan",
+                    });
+                }
+                // ambil data password
+                const { passwordLama, passwordBaru, confPasswordBaru } = req.body;
+                // validasi: jika tidak mengirimkan data lengkap
+                if (!passwordLama || !passwordBaru || !confPasswordBaru) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Data passwordLama, passwordBaru, confPasswordBaru harus diisi",
+                    });
+                }
+                // cek password lama di db
+                const validPasswordLama = yield bcrypt_1.default.compare(passwordLama, user.password);
+                // validasi: jika password salah / tidak sama / tidak valid
+                if (!validPasswordLama) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Password lama tidak valid",
+                    });
+                }
+                // validasi: compare password baru
+                if (passwordBaru !== confPasswordBaru) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Password baru tidak sama",
+                    });
+                }
+                // hash password baru
+                const salt = yield bcrypt_1.default.genSalt(10);
+                const hashPasswordBaru = yield bcrypt_1.default.hash(passwordBaru, salt);
+                // proses update password
+                const userUpdate = yield this.prisma.user.update({
+                    data: {
+                        password: hashPasswordBaru,
+                    },
+                    where: {
+                        id,
+                    },
+                });
+                // berikan response success
+                return res.json({
+                    status: "success",
+                    message: "Password berhasil diganti",
+                    userId: userUpdate.id,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({ status: "error", message: error.message });
+            }
+        });
         this.prisma = new client_1.PrismaClient();
     }
 }

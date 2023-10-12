@@ -63,28 +63,35 @@ class UserProfileController {
                 };
                 if (userProfile) {
                     // Jika userProfile sudah ada, update data saja
-                    yield this.prisma.userProfile.update({
+                    const updateUserProfile = yield this.prisma.userProfile.update({
                         data: newUserProfile,
                         where: {
                             user_id,
                         },
                     });
+                    // Response sukses
+                    return res.status(201).json({
+                        status: "success",
+                        message: "Berhasil menambahkan user profile",
+                        userProfileId: updateUserProfile.id,
+                    });
                 }
                 else {
                     // Jika userProfile belum ada, tambahkan data baru
-                    yield this.prisma.userProfile.create({
+                    const createUserProfile = yield this.prisma.userProfile.create({
                         data: Object.assign(Object.assign({}, newUserProfile), { user: {
                                 connect: {
                                     id: user_id,
                                 },
                             } }),
                     });
+                    // Response sukses
+                    return res.status(201).json({
+                        status: "success",
+                        message: "Berhasil menambahkan user profile",
+                        userProfileId: createUserProfile.id,
+                    });
                 }
-                // Response sukses
-                return res.status(201).json({
-                    status: "success",
-                    message: "Berhasil menambahkan user profile",
-                });
             }
             catch (error) {
                 // Tangani kesalahan
