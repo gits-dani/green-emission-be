@@ -17,6 +17,7 @@ CREATE TABLE `user_profile` (
     `no_hp` VARCHAR(191) NULL,
     `tanggal_lahir` DATETIME(3) NULL,
     `alamat` VARCHAR(191) NULL,
+    `foto_profil` VARCHAR(191) NULL,
     `user_id` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,

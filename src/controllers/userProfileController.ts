@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import dayjs from "dayjs";
 import validator from "validator";
+import { uploadImageToImgBB } from "../utils/uploadImageToImgBB";
 
 class UserProfileController {
   private prisma: PrismaClient;
@@ -135,6 +136,79 @@ class UserProfileController {
       // prosses ambil user profile berdasarkan id
     } catch (error: any) {
       return res.status(500).json({ status: "error", message: error.message });
+    }
+  };
+
+  addFotoProfil = async (req: Request, res: Response) => {
+    try {
+      // ambil id user
+      const user_id = parseInt(req.body.user_id);
+
+      // cek user berdasarkan user_id
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: user_id,
+        },
+      });
+
+      // validasi: jika user tidak ditemukan
+      if (!user) {
+        return res.status(404).json({
+          status: "error",
+          message: "User tidak ditemukan",
+        });
+      }
+
+      // ambil data file
+      // jika ada file yang diupload, isi dengan file buffernya klo ga ada isi null
+      const fileBuffer = req.file ? req.file.buffer : null;
+
+      // validasi: jika tidak ada file gambar yang dipilih
+      if (!req.file) {
+        return res.status(400).json({
+          status: "error",
+          message: "File gambar tidak ditemukan",
+        });
+      }
+
+      // proses upload image ke imgbb
+      const imageUrl = await uploadImageToImgBB(
+        fileBuffer,
+        req.file.originalname
+      );
+
+      // validasi: jika gambar gagal terupload
+      if (!imageUrl) {
+        return res.status(400).json({
+          status: "error",
+          message: "Gambar gagal terupload",
+        });
+      }
+
+      // setelah gambar berhasil terupload, hapus isi file buffer
+      req.file.buffer = Buffer.alloc(0);
+
+      // proses update data
+      const userProfile = await this.prisma.userProfile.update({
+        data: {
+          foto_profil: imageUrl,
+        },
+        where: {
+          user_id,
+        },
+      });
+
+      // berikan response success
+      return res.json({
+        status: "success",
+        message: "Berhasil menambahkan foto profil",
+        userProfileId: userProfile.id,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
     }
   };
 }

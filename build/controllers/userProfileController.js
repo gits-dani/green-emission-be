@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const dayjs_1 = __importDefault(require("dayjs"));
 const validator_1 = __importDefault(require("validator"));
+const uploadImageToImgBB_1 = require("../utils/uploadImageToImgBB");
 class UserProfileController {
     constructor() {
         // tambah user profile
@@ -128,6 +129,67 @@ class UserProfileController {
             }
             catch (error) {
                 return res.status(500).json({ status: "error", message: error.message });
+            }
+        });
+        this.addFotoProfil = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id user
+                const user_id = parseInt(req.body.user_id);
+                // cek user berdasarkan user_id
+                const user = yield this.prisma.user.findUnique({
+                    where: {
+                        id: user_id,
+                    },
+                });
+                // validasi: jika user tidak ditemukan
+                if (!user) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "User tidak ditemukan",
+                    });
+                }
+                // ambil data file
+                // jika ada file yang diupload, isi dengan file buffernya klo ga ada isi null
+                const fileBuffer = req.file ? req.file.buffer : null;
+                // validasi: jika tidak ada file gambar yang dipilih
+                if (!req.file) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "File gambar tidak ditemukan",
+                    });
+                }
+                // proses upload image ke imgbb
+                const imageUrl = yield (0, uploadImageToImgBB_1.uploadImageToImgBB)(fileBuffer, req.file.originalname);
+                // validasi: jika gambar gagal terupload
+                if (!imageUrl) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Gambar gagal terupload",
+                    });
+                }
+                // setelah gambar berhasil terupload, hapus isi file buffer
+                req.file.buffer = Buffer.alloc(0);
+                // proses update data
+                const userProfile = yield this.prisma.userProfile.update({
+                    data: {
+                        foto_profil: imageUrl,
+                    },
+                    where: {
+                        user_id,
+                    },
+                });
+                // berikan response success
+                return res.json({
+                    status: "success",
+                    message: "Berhasil menambahkan foto profil",
+                    userProfileId: userProfile.id,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
             }
         });
         this.prisma = new client_1.PrismaClient();

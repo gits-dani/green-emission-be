@@ -27,6 +27,7 @@ model UserProfile {
   no_hp String?
   tanggal_lahir DateTime?
   alamat String?
+  foto_profil String?
   user_id Int @unique
   user User @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
