@@ -35,3 +35,16 @@ model UserProfile {
 
   @@map("user_profile")
 }
+
+model EmissionPredict {
+  id Int @id @default(autoincrement())
+  nama_pemilik String
+  no_plat String
+  tipe_kendaraan String
+  emisi Float
+  prediksi String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("emission_predict")
+}
