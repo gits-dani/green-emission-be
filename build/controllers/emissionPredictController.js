@@ -19,17 +19,17 @@ class EmissionPredictController {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // ambil data dari req.body
-                const { nama_pemilik, no_plat, tipe_kendaraan, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, } = req.body;
+                const { nama_pemilik, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, tipe_kendaraan_id, } = req.body;
                 // validasi: jika data ada yang tidak terisi
                 if (!nama_pemilik ||
                     !no_plat ||
-                    !tipe_kendaraan ||
                     !engine_size ||
                     !cylinders ||
                     !fuel_consumption_city ||
                     !fuel_consumption_hwy ||
                     !fuel_consumption_comb ||
-                    !fuel_consumption_comb_mpg) {
+                    !fuel_consumption_comb_mpg ||
+                    !tipe_kendaraan_id) {
                     return res.status(400).json({
                         status: "error",
                         message: "Data nama_pemilik, no_plat tipe_kendaraan, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy,fuel_consumption_comb dan fuel_consumption_comb_mpg harus diisi",
@@ -50,20 +50,20 @@ class EmissionPredictController {
                 const newEmissionPredict = {
                     nama_pemilik,
                     no_plat,
-                    tipe_kendaraan,
                     emisi: parseFloat("4.9"),
                     prediksi: "Aman",
                     waktu: waktuWIB,
+                    tipe_kendaraan_id,
                 };
                 // proses add data
-                // const emissionPredict = await this.prisma.emissionPredict.create({
-                //   data: newEmissionPredict,
-                // });
+                const emissionPredict = yield this.prisma.emissionPredict.create({
+                    data: newEmissionPredict,
+                });
                 // berikan response success
                 return res.status(201).json({
                     status: "success",
                     message: "Berhasil prediksi emissi",
-                    // emissionPredict,
+                    emissionPredictId: emissionPredict.id,
                 });
             }
             catch (error) {
