@@ -21,8 +21,8 @@ class EmissionPredictController {
         fuel_consumption_hwy,
         fuel_consumption_comb,
         fuel_consumption_comb_mpg,
-        tipe_kendaraan_id,
       } = req.body;
+      const tipe_kendaraan_id = parseInt(req.body.tipe_kendaraan_id);
 
       // validasi: jika data ada yang tidak terisi
       if (
@@ -62,12 +62,20 @@ class EmissionPredictController {
         emisi: parseFloat("4.9"),
         prediksi: "Aman",
         waktu: waktuWIB,
-        tipe_kendaraan_id,
       };
 
       // proses add data
+      // proses add data
+      // proses add data
       const emissionPredict = await this.prisma.emissionPredict.create({
-        data: newEmissionPredict,
+        data: {
+          ...newEmissionPredict,
+          tipe_kendaraan: {
+            connect: {
+              id: tipe_kendaraan_id,
+            },
+          },
+        },
       });
 
       // berikan response success

@@ -19,7 +19,8 @@ class EmissionPredictController {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // ambil data dari req.body
-                const { nama_pemilik, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, tipe_kendaraan_id, } = req.body;
+                const { nama_pemilik, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, } = req.body;
+                const tipe_kendaraan_id = parseInt(req.body.tipe_kendaraan_id);
                 // validasi: jika data ada yang tidak terisi
                 if (!nama_pemilik ||
                     !no_plat ||
@@ -53,11 +54,16 @@ class EmissionPredictController {
                     emisi: parseFloat("4.9"),
                     prediksi: "Aman",
                     waktu: waktuWIB,
-                    tipe_kendaraan_id,
                 };
                 // proses add data
+                // proses add data
+                // proses add data
                 const emissionPredict = yield this.prisma.emissionPredict.create({
-                    data: newEmissionPredict,
+                    data: Object.assign(Object.assign({}, newEmissionPredict), { tipe_kendaraan: {
+                            connect: {
+                                id: tipe_kendaraan_id,
+                            },
+                        } }),
                 });
                 // berikan response success
                 return res.status(201).json({
