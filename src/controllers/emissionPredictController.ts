@@ -91,6 +91,25 @@ class EmissionPredictController {
       });
     }
   };
+
+  getAll = async (req: Request, res: Response) => {
+    try {
+      // proses ambil semua data
+      const emissionPredict = await this.prisma.emissionPredict.findMany();
+
+      // berikan response success
+      return res.json({
+        status: "success",
+        message: "Berhasil mengambil semua data",
+        emissionPredict,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  };
 }
 
 export default new EmissionPredictController();

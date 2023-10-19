@@ -201,13 +201,33 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"nama_pemilik\": \"John Doe\",\r\n  \"no_plat\": \"ABC123\",\r\n  \"tipe_kendaraan\": \"Mobil\",\r\n  \"engine_size\": 2.5,\r\n  \"cylinders\": 4,\r\n  \"fuel_consumption_city\": 8.5,\r\n  \"fuel_consumption_hwy\": 6.2,\r\n  \"fuel_consumption_comb\": 7.2,\r\n  \"fuel_consumption_comb_mpg\": 35\r\n}\r\n",
+									"raw": "{\r\n  \"nama_pemilik\": \"John Doe\",\r\n  \"no_plat\": \"ABC123\",\r\n  \"engine_size\": \"2.0\",\r\n  \"cylinders\": \"4\",\r\n  \"fuel_consumption_city\": \"10.5\",\r\n  \"fuel_consumption_hwy\": \"8.2\",\r\n  \"fuel_consumption_comb\": \"9.2\",\r\n  \"fuel_consumption_comb_mpg\": \"25.5\",\r\n  \"tipe_kendaraan_id\": 1\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
+								"url": {
+									"raw": "http://localhost:3000/api/emission-predict",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"emission-predict"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/api/emission-predict",
+							"request": {
+								"method": "GET",
+								"header": [],
 								"url": {
 									"raw": "http://localhost:3000/api/emission-predict",
 									"protocol": "http",

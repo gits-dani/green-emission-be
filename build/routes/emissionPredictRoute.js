@@ -8,4 +8,5 @@ const emissionPredictController_1 = __importDefault(require("../controllers/emis
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 const route = (0, express_1.Router)();
 route.post("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.add);
+route.get("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.getAll);
 exports.default = route;

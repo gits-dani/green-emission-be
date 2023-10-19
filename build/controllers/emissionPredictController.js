@@ -79,6 +79,24 @@ class EmissionPredictController {
                 });
             }
         });
+        this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // proses ambil semua data
+                const emissionPredict = yield this.prisma.emissionPredict.findMany();
+                // berikan response success
+                return res.json({
+                    status: "success",
+                    message: "Berhasil mengambil semua data",
+                    emissionPredict,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
         this.prisma = new client_1.PrismaClient();
     }
 }
