@@ -19,7 +19,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"farid@gmail.com\",\r\n    \"password\": \"123\"\r\n}",
+									"raw": "{\r\n    \"email\": \"user1@gmail.com\",\r\n    \"password\": \"123\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -48,7 +48,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"email\": \"ekal@gmail.com\",\r\n    \"password\": \"111\"\r\n}",
+									"raw": "{\r\n    \"email\": \"user1@gmail.com\",\r\n    \"password\": \"123\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -131,7 +131,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nama\": \"farid nih bos senggol dong\",\r\n    \"no_hp\": \"089893894792\",\r\n    \"tanggal_lahir\": \"2021-08-18\",\r\n    \"alamat\": \"ini alamat\",\r\n    \"user_id\": 2\r\n}\r\n",
+									"raw": "{\r\n    \"nama\": \"farid nih bos senggol dong\",\r\n    \"no_hp\": \"089893894792\",\r\n    \"tanggal_lahir\": \"2021-08-18\",\r\n    \"alamat\": \"ini alamat\",\r\n    \"user_id\": 1\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -184,6 +184,94 @@
 										"api",
 										"user-profile",
 										"upload-foto-profil"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "emission predict",
+					"item": [
+						{
+							"name": "/api/emission-predict",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"nama_pemilik\": \"John Doe\",\r\n  \"no_plat\": \"ABC123\",\r\n  \"tipe_kendaraan\": \"Mobil\",\r\n  \"engine_size\": 2.5,\r\n  \"cylinders\": 4,\r\n  \"fuel_consumption_city\": 8.5,\r\n  \"fuel_consumption_hwy\": 6.2,\r\n  \"fuel_consumption_comb\": 7.2,\r\n  \"fuel_consumption_comb_mpg\": 35\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/emission-predict",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"emission-predict"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tipe kendaraan",
+					"item": [
+						{
+							"name": "/api/emission-predict",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"tipe\": \"mobil\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/tipe-kendaraan",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tipe-kendaraan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/api/tipe-kendaraan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/tipe-kendaraan",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"tipe-kendaraan"
 									]
 								}
 							},

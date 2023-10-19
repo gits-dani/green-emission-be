@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
 class EmissionPredictController {
     constructor() {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -40,22 +44,26 @@ class EmissionPredictController {
                     fuel_consumption_comb: parseFloat(fuel_consumption_comb),
                     fuel_consumption_comb_mpg: parseFloat(fuel_consumption_comb_mpg),
                 };
+                // waktu: untuk menentukan saat melakukan prediksi
+                const waktuWIB = moment_timezone_1.default.utc().tz("Asia/Jakarta").format();
+                // object inputan emissionPredict db
                 const newEmissionPredict = {
                     nama_pemilik,
                     no_plat,
                     tipe_kendaraan,
-                    emisi: parseFloat("4"),
+                    emisi: parseFloat("4.9"),
                     prediksi: "Aman",
+                    waktu: waktuWIB,
                 };
                 // proses add data
-                const emissionPredict = yield this.prisma.emissionPredict.create({
-                    data: newEmissionPredict,
-                });
+                // const emissionPredict = await this.prisma.emissionPredict.create({
+                //   data: newEmissionPredict,
+                // });
                 // berikan response success
                 return res.status(201).json({
                     status: "success",
                     message: "Berhasil prediksi emissi",
-                    emissionPredict,
+                    // emissionPredict,
                 });
             }
             catch (error) {

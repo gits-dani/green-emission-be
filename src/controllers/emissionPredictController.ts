@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import moment from "moment-timezone";
 
 class EmissionPredictController {
   private prisma: PrismaClient;
@@ -52,24 +53,28 @@ class EmissionPredictController {
         fuel_consumption_comb_mpg: parseFloat(fuel_consumption_comb_mpg),
       };
 
+      // waktu: untuk menentukan saat melakukan prediksi
+      const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
+      // object inputan emissionPredict db
       const newEmissionPredict = {
         nama_pemilik,
         no_plat,
         tipe_kendaraan,
-        emisi: parseFloat("4"),
+        emisi: parseFloat("4.9"),
         prediksi: "Aman",
+        waktu: waktuWIB,
       };
 
       // proses add data
-      const emissionPredict = await this.prisma.emissionPredict.create({
-        data: newEmissionPredict,
-      });
+      // const emissionPredict = await this.prisma.emissionPredict.create({
+      //   data: newEmissionPredict,
+      // });
 
       // berikan response success
       return res.status(201).json({
         status: "success",
         message: "Berhasil prediksi emissi",
-        emissionPredict,
+        // emissionPredict,
       });
     } catch (error: any) {
       return res.status(500).json({

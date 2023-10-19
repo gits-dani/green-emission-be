@@ -9,6 +9,7 @@ const passport_1 = __importDefault(require("./config/passport"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const userProfileRoute_1 = __importDefault(require("./routes/userProfileRoute"));
 const emissionPredictRoute_1 = __importDefault(require("./routes/emissionPredictRoute"));
+const tipeKendaraanRoute_1 = __importDefault(require("./routes/tipeKendaraanRoute"));
 const app = (0, express_1.default)();
 const port = 3000;
 // middleware
@@ -23,6 +24,7 @@ app.use(passport_1.default.session()); // mengelola otentikasi passport berbasis
 app.use("/api", userRoute_1.default);
 app.use("/api", userProfileRoute_1.default);
 app.use("/api", emissionPredictRoute_1.default);
+app.use("/api", tipeKendaraanRoute_1.default);
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

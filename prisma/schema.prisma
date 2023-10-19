@@ -40,11 +40,21 @@ model EmissionPredict {
   id Int @id @default(autoincrement())
   nama_pemilik String
   no_plat String
-  tipe_kendaraan String
   emisi Float
   prediksi String
+  waktu DateTime
+  tipe_kendaraan_id Int
+  tipe_kendaraan TipeKendaraan @relation(fields: [tipe_kendaraan_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   @@map("emission_predict")
+}
+
+model TipeKendaraan {
+  id Int @id @default(autoincrement())
+  tipe String
+  emission_predict EmissionPredict[]
+
+  @@map("tipe_kendaraan")
 }

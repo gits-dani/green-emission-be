@@ -4,8 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const emissionPredictController_1 = __importDefault(require("../controllers/emissionPredictController"));
+const tipeKendaraanController_1 = __importDefault(require("../controllers/tipeKendaraanController"));
 const isAuthenticated_1 = require("../middlewares/isAuthenticated");
 const route = (0, express_1.Router)();
-route.post("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.add);
+route.post("/tipe-kendaraan", isAuthenticated_1.isAuthenticated, tipeKendaraanController_1.default.add);
+route.get("/tipe-kendaraan", isAuthenticated_1.isAuthenticated, tipeKendaraanController_1.default.getAll);
 exports.default = route;
