@@ -65,8 +65,6 @@ class EmissionPredictController {
       };
 
       // proses add data
-      // proses add data
-      // proses add data
       const emissionPredict = await this.prisma.emissionPredict.create({
         data: {
           ...newEmissionPredict,

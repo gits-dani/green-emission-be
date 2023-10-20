@@ -56,8 +56,6 @@ class EmissionPredictController {
                     waktu: waktuWIB,
                 };
                 // proses add data
-                // proses add data
-                // proses add data
                 const emissionPredict = yield this.prisma.emissionPredict.create({
                     data: Object.assign(Object.assign({}, newEmissionPredict), { tipe_kendaraan: {
                             connect: {
