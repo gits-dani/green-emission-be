@@ -66,6 +66,12 @@ model EmissionPredict {
   id Int @id @default(autoincrement())
   nama_pemilik String
   no_plat String
+  engine_size Float
+  cylinders Float
+  fuel_consumption_city Float
+  fuel_consumption_hwy Float
+  fuel_consumption_comb Float
+  fuel_consumption_comb_mpg Float
   emisi Float
   prediksi String
   waktu DateTime

@@ -43,6 +43,21 @@ class EmissionPredictController {
         });
       }
 
+      // cek tipe kendaraan di db
+      const tipe_kendaraan = await this.prisma.tipeKendaraan.findUnique({
+        where: {
+          id: tipe_kendaraan_id,
+        },
+      });
+
+      // validasi: jika tipe kendaraan tidak ditemukan
+      if (!tipe_kendaraan) {
+        return res.status(404).json({
+          status: "error",
+          message: "Tipe kendaraan tidak ditemukan",
+        });
+      }
+
       // buat object inputan mode
       const inputanModel = {
         engine_size: parseFloat(engine_size),
@@ -53,12 +68,16 @@ class EmissionPredictController {
         fuel_consumption_comb_mpg: parseFloat(fuel_consumption_comb_mpg),
       };
 
+      // proses input ke model
+
+      // proses membuat object dari data output model untuk dimasukkan ke db
       // waktu: untuk menentukan saat melakukan prediksi
       const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
       // object inputan emissionPredict db
       const newEmissionPredict = {
         nama_pemilik,
         no_plat,
+        ...inputanModel,
         emisi: parseFloat("4.9"),
         prediksi: "Aman",
         waktu: waktuWIB,
