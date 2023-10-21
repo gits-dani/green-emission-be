@@ -10,5 +10,16 @@ route.get(
   isAuthenticated,
   emissionPredictController.getAll
 );
+route.get(
+  "/emission-predict/:id",
+  isAuthenticated,
+  emissionPredictController.getOne
+);
+
+route.delete(
+  "/emission-predict/:id",
+  isAuthenticated,
+  emissionPredictController.delete
+);
 
 export default route;

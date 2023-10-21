@@ -169,7 +169,7 @@
 										{
 											"key": "foto_profil",
 											"type": "file",
-											"src": "/C:/Users/acer/Downloads/thumbnail pertemuan 2 proposal skripsi.png"
+											"src": "/C:/Users/acer/Downloads/thumbnail pertemuan 4 proposal skripsi.png"
 										}
 									]
 								},
@@ -201,7 +201,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n  \"nama_pemilik\": \"John Doe\",\r\n  \"no_plat\": \"ABC123\",\r\n  \"engine_size\": \"2.0\",\r\n  \"cylinders\": \"4\",\r\n  \"fuel_consumption_city\": \"10.5\",\r\n  \"fuel_consumption_hwy\": \"8.2\",\r\n  \"fuel_consumption_comb\": \"9.2\",\r\n  \"fuel_consumption_comb_mpg\": \"25.5\",\r\n  \"tipe_kendaraan_id\": 1\r\n}\r\n",
+									"raw": "{\r\n  \"nama_pemilik\": \"Alex\",\r\n  \"no_plat\": \"ABC123\",\r\n  \"engine_size\": \"2.0\",\r\n  \"cylinders\": \"4\",\r\n  \"fuel_consumption_city\": \"10.5\",\r\n  \"fuel_consumption_hwy\": \"8.2\",\r\n  \"fuel_consumption_comb\": \"9.2\",\r\n  \"fuel_consumption_comb_mpg\": \"25.5\",\r\n  \"tipe_kendaraan_id\": 2\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -242,6 +242,48 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "/api/emission-predict/:id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/emission-predict/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"emission-predict",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/api/emission-predict/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/emission-predict/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"emission-predict",
+										"2"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -249,13 +291,13 @@
 					"name": "tipe kendaraan",
 					"item": [
 						{
-							"name": "/api/emission-predict",
+							"name": "/api/tipe-kendaraan",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"tipe\": \"mobil\"\r\n}\r\n",
+									"raw": "{\r\n    \"tipe\": \"motor\"\r\n}\r\n",
 									"options": {
 										"raw": {
 											"language": "json"

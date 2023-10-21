@@ -105,6 +105,72 @@ class EmissionPredictController {
                 });
             }
         });
+        this.getOne = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id dari req.params.id
+                const id = parseInt(req.params.id);
+                // cek id di database
+                const emissionPredict = yield this.prisma.emissionPredict.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+                // validasi: jika data emission predict tidak ada
+                if (!emissionPredict) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "Data emission predict tidak ditemukan",
+                    });
+                }
+                // berikan response success
+                return res.json({
+                    status: "success",
+                    message: "Berhasil mengambil satu data emission predict",
+                    emissionPredict,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
+        this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id dari req.params.id
+                const id = parseInt(req.params.id);
+                // cek id di database
+                const emissionPredict = yield this.prisma.emissionPredict.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+                // validasi: jika data emisison predict tidak ditemukan
+                if (!emissionPredict) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "Data emission predict tidak ditemukan",
+                    });
+                }
+                // proses hapus data
+                yield this.prisma.emissionPredict.delete({
+                    where: {
+                        id,
+                    },
+                });
+                return res.json({
+                    status: "success",
+                    message: "Berhasil menghapus satu data emission predict",
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
         this.prisma = new client_1.PrismaClient();
     }
 }
