@@ -173,19 +173,70 @@ class EmissionPredictController {
                     waktu: waktuWIB,
                     tipe_kendaraan_id: tipe_kendaraan_id || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.tipe_kendaraan_id) || "",
                 };
-                // proses update data
-                const updateEmissionPredict = yield this.prisma.emissionPredict.update({
-                    where: {
-                        id,
-                    },
-                    data: newEmissionPredict,
-                });
-                // berikan response success
-                return res.json({
-                    status: "success",
-                    message: "Berhasil mengedit data",
-                    emissionPredictId: updateEmissionPredict.id,
-                });
+                // validasi: jika data inputan ke model machine learning dirubah
+                if (engine_size ||
+                    cylinders ||
+                    fuel_consumption_city ||
+                    fuel_consumption_hwy ||
+                    fuel_consumption_comb ||
+                    fuel_consumption_comb_mpg) {
+                    // buat object inputan mode
+                    const inputanModel = {
+                        engine_size: engine_size
+                            ? parseFloat(engine_size)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.engine_size) || 0,
+                        cylinders: cylinders
+                            ? parseFloat(cylinders)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.cylinders) || 0,
+                        fuel_consumption_city: fuel_consumption_city
+                            ? parseFloat(fuel_consumption_city)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_city) || 0,
+                        fuel_consumption_hwy: fuel_consumption_hwy
+                            ? parseFloat(fuel_consumption_hwy)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_hwy) || 0,
+                        fuel_consumption_comb: fuel_consumption_comb
+                            ? parseFloat(fuel_consumption_comb)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb) || 0,
+                        fuel_consumption_comb_mpg: fuel_consumption_comb_mpg
+                            ? parseFloat(fuel_consumption_comb_mpg)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb_mpg) || 0,
+                    };
+                    // proses memasukkan data ke model machine learning dan ambil outputnya untuk update data ke db
+                    const updateEmissionPredict = yield this.prisma.emissionPredict.update({
+                        where: {
+                            id,
+                        },
+                        data: Object.assign(Object.assign({ nama_pemilik: nama_pemilik || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.nama_pemilik) || "", no_plat: no_plat || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_plat) || "", tipe_kendaraan_id: tipe_kendaraan_id || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.tipe_kendaraan_id) }, inputanModel), { emisi: 4.9, prediksi: "Aman Update", waktu: waktuWIB }),
+                    });
+                    // berikan response success
+                    return res.json({
+                        status: "success",
+                        message: "Berhasil mengedit data",
+                        emissionPredictId: updateEmissionPredict.id,
+                    });
+                }
+                else {
+                    // proses update data
+                    const updateEmissionPredict = yield this.prisma.emissionPredict.update({
+                        where: {
+                            id,
+                        },
+                        data: {
+                            nama_pemilik: nama_pemilik || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.nama_pemilik) || "",
+                            no_plat: no_plat || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_plat) || "",
+                            tipe_kendaraan_id: tipe_kendaraan_id
+                                ? parseInt(tipe_kendaraan_id)
+                                : emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.tipe_kendaraan_id,
+                            waktu: waktuWIB,
+                        },
+                    });
+                    // berikan response success
+                    return res.json({
+                        status: "success",
+                        message: "Berhasil mengedit data",
+                        emissionPredictId: updateEmissionPredict.id,
+                    });
+                }
             }
             catch (error) {
                 return res.status(500).json({
