@@ -57,7 +57,7 @@ class UserProfileController {
       // Buat object user profile
       const newUserProfile = {
         nama: nama || userProfile?.nama || "", // Gunakan nama default jika tidak ada data baru
-        no_hp: no_hp || userProfile?.no_hp || "",
+        no_hp: no_hp || userProfile?.no_hp || "", // ? operator chaining, cek apakah propertinya ada
         tanggal_lahir: tanggal_lahir_iso || userProfile?.tanggal_lahir || "",
         alamat: alamat || userProfile?.alamat || "",
       };

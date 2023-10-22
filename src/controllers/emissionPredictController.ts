@@ -162,6 +162,85 @@ class EmissionPredictController {
     }
   };
 
+  edit = async (req: Request, res: Response) => {
+    try {
+      // ambil id dari req.params.id
+      const id = parseInt(req.params.id);
+
+      // cek data di db
+      const emissionPredict = await this.prisma.emissionPredict.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      // validasi: jika data tidak ada
+      if (!emissionPredict) {
+        return res.status(404).json({
+          status: "error",
+          message: "Data emission predict tidak ditemukan",
+        });
+      }
+
+      // ambil data dari body
+      const {
+        nama_pemilik,
+        no_plat,
+        engine_size,
+        cylinders,
+        fuel_consumption_city,
+        fuel_consumption_hwy,
+        fuel_consumption_comb,
+        fuel_consumption_comb_mpg,
+        tipe_kendaraan_id,
+      } = req.body;
+
+      const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
+      // buat object emissionPredict
+      const newEmissionPredict = {
+        nama_pemilik: nama_pemilik || emissionPredict?.nama_pemilik || "",
+        no_plat: no_plat || emissionPredict?.no_plat || "",
+        engine_size: engine_size || emissionPredict?.engine_size || "",
+        cylinders: cylinders || emissionPredict?.cylinders || "",
+        fuel_consumption_city:
+          fuel_consumption_city || emissionPredict?.fuel_consumption_city || "",
+        fuel_consumption_hwy:
+          fuel_consumption_hwy || emissionPredict?.fuel_consumption_hwy || "",
+        fuel_consumption_comb:
+          fuel_consumption_comb || emissionPredict?.fuel_consumption_comb || "",
+        fuel_consumption_comb_mpg:
+          fuel_consumption_comb_mpg ||
+          emissionPredict?.fuel_consumption_comb_mpg ||
+          "",
+        emisi: 4.9,
+        prediksi: "Aman Update",
+        waktu: waktuWIB,
+        tipe_kendaraan_id:
+          tipe_kendaraan_id || emissionPredict?.tipe_kendaraan_id || "",
+      };
+
+      // proses update data
+      const updateEmissionPredict = await this.prisma.emissionPredict.update({
+        where: {
+          id,
+        },
+        data: newEmissionPredict,
+      });
+
+      // berikan response success
+      return res.json({
+        status: "success",
+        message: "Berhasil mengedit data",
+        emissionPredictId: updateEmissionPredict.id,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  };
+
   delete = async (req: Request, res: Response) => {
     try {
       // ambil id dari req.params.id

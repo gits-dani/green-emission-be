@@ -136,6 +136,64 @@ class EmissionPredictController {
                 });
             }
         });
+        this.edit = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id dari req.params.id
+                const id = parseInt(req.params.id);
+                // cek data di db
+                const emissionPredict = yield this.prisma.emissionPredict.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+                // validasi: jika data tidak ada
+                if (!emissionPredict) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "Data emission predict tidak ditemukan",
+                    });
+                }
+                // ambil data dari body
+                const { nama_pemilik, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, tipe_kendaraan_id, } = req.body;
+                const waktuWIB = moment_timezone_1.default.utc().tz("Asia/Jakarta").format();
+                // buat object emissionPredict
+                const newEmissionPredict = {
+                    nama_pemilik: nama_pemilik || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.nama_pemilik) || "",
+                    no_plat: no_plat || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_plat) || "",
+                    engine_size: engine_size || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.engine_size) || "",
+                    cylinders: cylinders || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.cylinders) || "",
+                    fuel_consumption_city: fuel_consumption_city || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_city) || "",
+                    fuel_consumption_hwy: fuel_consumption_hwy || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_hwy) || "",
+                    fuel_consumption_comb: fuel_consumption_comb || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb) || "",
+                    fuel_consumption_comb_mpg: fuel_consumption_comb_mpg ||
+                        (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb_mpg) ||
+                        "",
+                    emisi: 4.9,
+                    prediksi: "Aman Update",
+                    waktu: waktuWIB,
+                    tipe_kendaraan_id: tipe_kendaraan_id || (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.tipe_kendaraan_id) || "",
+                };
+                // proses update data
+                const updateEmissionPredict = yield this.prisma.emissionPredict.update({
+                    where: {
+                        id,
+                    },
+                    data: newEmissionPredict,
+                });
+                // berikan response success
+                return res.json({
+                    status: "success",
+                    message: "Berhasil mengedit data",
+                    emissionPredictId: updateEmissionPredict.id,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
         this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // ambil id dari req.params.id

@@ -16,6 +16,12 @@ route.get(
   emissionPredictController.getOne
 );
 
+route.put(
+  "/emission-predict/:id",
+  isAuthenticated,
+  emissionPredictController.edit
+);
+
 route.delete(
   "/emission-predict/:id",
   isAuthenticated,
