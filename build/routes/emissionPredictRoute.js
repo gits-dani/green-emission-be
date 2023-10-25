@@ -10,6 +10,6 @@ const route = (0, express_1.Router)();
 route.post("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.add);
 route.get("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.getAll);
 route.get("/emission-predict/:id", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.getOne);
-route.put("/emission-predict/:id", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.edit);
+route.put("/emission-predict/:id", emissionPredictController_1.default.edit);
 route.delete("/emission-predict/:id", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.delete);
 exports.default = route;
