@@ -23,6 +23,7 @@ class EmissionPredictController {
         fuel_consumption_comb_mpg,
       } = req.body;
       const tipe_kendaraan_id = parseInt(req.body.tipe_kendaraan_id);
+      const user_id = parseInt(req.body.user_id);
 
       // validasi: jika data ada yang tidak terisi
       if (
@@ -30,16 +31,17 @@ class EmissionPredictController {
         !no_plat ||
         !engine_size ||
         !cylinders ||
+        !tipe_kendaraan_id ||
         !fuel_consumption_city ||
         !fuel_consumption_hwy ||
         !fuel_consumption_comb ||
         !fuel_consumption_comb_mpg ||
-        !tipe_kendaraan_id
+        !user_id
       ) {
         return res.status(400).json({
           status: "error",
           message:
-            "Data nama_pemilik, no_plat tipe_kendaraan, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy,fuel_consumption_comb dan fuel_consumption_comb_mpg harus diisi",
+            "Data nama_pemilik, no_plat, tipe_kendaraan_id, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy,fuel_consumption_comb,  fuel_consumption_comb_mpg dan user_id harus diisi",
         });
       }
 
@@ -58,6 +60,21 @@ class EmissionPredictController {
         });
       }
 
+      // cek user di db
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: user_id,
+        },
+      });
+
+      // validasi: jika user tidak ada
+      if (!user) {
+        return res.status(404).json({
+          status: "error",
+          message: "User tidak ditemukan",
+        });
+      }
+
       // buat object inputan mode
       const inputanModel = {
         engine_size: parseFloat(engine_size),
@@ -73,26 +90,30 @@ class EmissionPredictController {
       // proses membuat object dari data output model untuk dimasukkan ke db
       // waktu: untuk menentukan saat melakukan prediksi
       const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
+
       // object inputan emissionPredict db
       const newEmissionPredict = {
         nama_pemilik,
         no_plat,
+        tipe_kendaraan: {
+          connect: {
+            id: tipe_kendaraan_id,
+          },
+        },
         ...inputanModel,
         emisi: parseFloat("4.9"),
         prediksi: "Aman",
         waktu: waktuWIB,
+        user: {
+          connect: {
+            id: user_id,
+          },
+        },
       };
 
       // proses add data
       const emissionPredict = await this.prisma.emissionPredict.create({
-        data: {
-          ...newEmissionPredict,
-          tipe_kendaraan: {
-            connect: {
-              id: tipe_kendaraan_id,
-            },
-          },
-        },
+        data: newEmissionPredict,
       });
 
       // berikan response success
@@ -112,7 +133,37 @@ class EmissionPredictController {
   getAll = async (req: Request, res: Response) => {
     try {
       // proses ambil semua data
-      const emissionPredict = await this.prisma.emissionPredict.findMany();
+      const emissionPredict = await this.prisma.emissionPredict.findMany({
+        select: {
+          id: true,
+          nama_pemilik: true,
+          no_plat: true,
+          engine_size: true,
+          cylinders: true,
+          fuel_consumption_city: true,
+          fuel_consumption_hwy: true,
+          fuel_consumption_comb: true,
+          fuel_consumption_comb_mpg: true,
+          emisi: true,
+          prediksi: true,
+          waktu: true,
+          tipe_kendaraan: {
+            select: {
+              tipe: true,
+            },
+          },
+          user: {
+            select: {
+              user_profile: {
+                select: {
+                  nama: true,
+                  no_hp: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
       // berikan response success
       return res.json({
@@ -137,6 +188,35 @@ class EmissionPredictController {
       const emissionPredict = await this.prisma.emissionPredict.findUnique({
         where: {
           id,
+        },
+        select: {
+          id: true,
+          nama_pemilik: true,
+          no_plat: true,
+          engine_size: true,
+          cylinders: true,
+          fuel_consumption_city: true,
+          fuel_consumption_hwy: true,
+          fuel_consumption_comb: true,
+          fuel_consumption_comb_mpg: true,
+          emisi: true,
+          prediksi: true,
+          waktu: true,
+          tipe_kendaraan: {
+            select: {
+              tipe: true,
+            },
+          },
+          user: {
+            select: {
+              user_profile: {
+                select: {
+                  nama: true,
+                  no_hp: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -187,13 +267,13 @@ class EmissionPredictController {
       const {
         nama_pemilik,
         no_plat,
+        tipe_kendaraan_id,
         engine_size,
         cylinders,
         fuel_consumption_city,
         fuel_consumption_hwy,
         fuel_consumption_comb,
         fuel_consumption_comb_mpg,
-        tipe_kendaraan_id,
       } = req.body;
       const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
 
@@ -215,9 +295,10 @@ class EmissionPredictController {
       // validasi: jika data ada yang berubah
       // membandingkan data yang dikirim oleh user dari req.body dan data emissonPredict yang ada di db
       // jika ada data inputan model seperti engine_size, cylinders dll yang dirubah maka masuk ke proses update data pertama, dan jika tidak ada data inputan model yang dirubah maka masuk ke proses update data kedua
-      const isNamaPemilik = nama_pemilik !== emissionPredict.nama_pemilik;
-      const isNoPlat = no_plat !== emissionPredict.no_plat;
-      const isTipeKendaraanId =
+      const isNamaPemilikChanged =
+        nama_pemilik !== emissionPredict.nama_pemilik;
+      const isNoPlatChanged = no_plat !== emissionPredict.no_plat;
+      const isTipeKendaraanIdChanged =
         parseFloat(tipe_kendaraan_id) !== emissionPredict.tipe_kendaraan_id;
       const isEngineSizeChanged =
         parseFloat(engine_size) !== emissionPredict.engine_size;
@@ -249,7 +330,7 @@ class EmissionPredictController {
         isFuelConsumptionCombChanged ||
         isFuelConsumptionCombMpgChanged
       ) {
-        // buat object inputan mode
+        // buat object inputan model
         // melakukan pengecekan, jika data dirubah maka pakai data itu, jika tidak maka pakai data lama
         const inputanModel = {
           engine_size: isEngineSizeChanged
@@ -274,13 +355,17 @@ class EmissionPredictController {
 
         // object emission predict baru untuk data update
         const newEmissionPredict = {
-          nama_pemilik: isNamaPemilik
+          nama_pemilik: isNamaPemilikChanged
             ? nama_pemilik
             : emissionPredict?.nama_pemilik || "",
-          no_plat: isNoPlat ? no_plat : emissionPredict?.no_plat || "",
-          tipe_kendaraan_id: isTipeKendaraanId
-            ? parseInt(tipe_kendaraan_id)
-            : emissionPredict?.tipe_kendaraan_id,
+          no_plat: isNoPlatChanged ? no_plat : emissionPredict?.no_plat || "",
+          tipe_kendaraan: {
+            connect: {
+              id: isTipeKendaraanIdChanged
+                ? parseInt(tipe_kendaraan_id)
+                : emissionPredict.tipe_kendaraan_id,
+            },
+          },
           ...inputanModel,
           emisi: 4.9,
           prediksi: "Aman Update",
@@ -298,17 +383,21 @@ class EmissionPredictController {
         // berikan response success
         return res.json({
           status: "success",
-          message: "Berhasil mengedit data inputan model",
+          message: "Berhasil mengedit data emission predict",
           emissionPredictId: updateEmissionPredict.id,
         });
-      } else if (isNamaPemilik || isNoPlat || isTipeKendaraanId) {
+      } else if (
+        isNamaPemilikChanged ||
+        isNoPlatChanged ||
+        isTipeKendaraanIdChanged
+      ) {
         // object emission predict baru untuk data update
         const newEmissionPredict = {
-          nama_pemilik: isNamaPemilik
+          nama_pemilik: isNamaPemilikChanged
             ? nama_pemilik
             : emissionPredict?.nama_pemilik || "",
-          no_plat: isNoPlat ? no_plat : emissionPredict?.no_plat || "",
-          tipe_kendaraan_id: isTipeKendaraanId
+          no_plat: isNoPlatChanged ? no_plat : emissionPredict?.no_plat || "",
+          tipe_kendaraan_id: isTipeKendaraanIdChanged
             ? parseInt(tipe_kendaraan_id)
             : emissionPredict?.tipe_kendaraan_id,
         };
@@ -324,14 +413,14 @@ class EmissionPredictController {
         // berikan response success
         return res.json({
           status: "success",
-          message: "Berhasil mengedit data biasa",
+          message: "Berhasil mengedit data emission predict",
           emissionPredictId: updateEmissionPredict.id,
         });
       } else {
         // berikan response success
         return res.json({
           status: "success",
-          message: "Berhasil mengedit data biasa ajaaaaaaaaaaaa",
+          message: "Berhasil mengedit data emission predict",
           emissionPredictId: emissionPredict.id,
         });
       }
@@ -364,7 +453,7 @@ class EmissionPredictController {
       }
 
       // proses hapus data
-      await this.prisma.emissionPredict.delete({
+      const emissionPredictDeleted = await this.prisma.emissionPredict.delete({
         where: {
           id,
         },
@@ -373,6 +462,7 @@ class EmissionPredictController {
       return res.json({
         status: "success",
         message: "Berhasil menghapus satu data emission predict",
+        emissionPredictId: emissionPredictDeleted.id,
       });
     } catch (error: any) {
       return res.status(500).json({

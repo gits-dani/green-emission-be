@@ -45,7 +45,12 @@ class TipeKendaraanController {
   getAll = async (req: Request, res: Response) => {
     try {
       // proses ambil semua data
-      const tipeKendaraan = await this.prisma.tipeKendaraan.findMany();
+      const tipeKendaraan = await this.prisma.tipeKendaraan.findMany({
+        select: {
+          id: true,
+          tipe: true,
+        },
+      });
 
       // berikan response success
       return res.json({

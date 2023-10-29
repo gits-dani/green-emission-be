@@ -46,7 +46,12 @@ class TipeKendaraanController {
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // proses ambil semua data
-                const tipeKendaraan = yield this.prisma.tipeKendaraan.findMany();
+                const tipeKendaraan = yield this.prisma.tipeKendaraan.findMany({
+                    select: {
+                        id: true,
+                        tipe: true,
+                    },
+                });
                 // berikan response success
                 return res.json({
                     status: "success",

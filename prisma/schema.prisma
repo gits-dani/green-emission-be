@@ -10,13 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id Int @id @default(autoincrement())
-  email String @unique
-  password String
-  user_profile UserProfile? // deklarasi hubungan: bahwasanya User ada hubugnanya dengan UserProfile yaitu one to one
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+model User {
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  password    String
+  user_profile UserProfile? // deklarasi hubungan satu-ke-satu
+  emission_predict EmissionPredict[] // deklarasi hubungan satu-ke-banyak
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
 
   @@map("user")
 }
@@ -36,36 +37,12 @@ model UserProfile {
   @@map("user_profile")
 }
 
-// model User{
-//   id Int @id @default(autoincrement())
-//   email String @unique
-//   password String
-//   user_profile_id Int @unique
-//   user_profile UserProfile @relation(fields: [user_profile_id], references: [id])
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-
-//   @@map("user")
-// }
-
-// model UserProfile {
-//   id Int @id @default(autoincrement())
-//   nama String?
-//   no_hp String?
-//   tanggal_lahir DateTime?
-//   alamat String?
-//   foto_profil String?
-//   user User?
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-
-//   @@map("user_profile")
-// }
-
 model EmissionPredict {
   id Int @id @default(autoincrement())
   nama_pemilik String
   no_plat String
+  tipe_kendaraan_id Int
+  tipe_kendaraan TipeKendaraan @relation(fields: [tipe_kendaraan_id], references: [id])
   engine_size Float
   cylinders Float
   fuel_consumption_city Float
@@ -75,8 +52,8 @@ model EmissionPredict {
   emisi Float
   prediksi String
   waktu DateTime
-  tipe_kendaraan_id Int // many to one -> hanya dapat pilih 1 tipe kendaraan
-  tipe_kendaraan TipeKendaraan @relation(fields: [tipe_kendaraan_id], references: [id])
+  user_id Int
+  user User @relation(fields: [user_id], references: [id]) // deklarasi hubungan many-to-one ke model User
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -90,6 +67,8 @@ model TipeKendaraan {
   tipe String
   emission_predict EmissionPredict[] // deklarasi hubungan antar tabel: dimana TipeKendaraan memiliki hubungan dengan EmissionPredict yaitu one to many
   // Saat Anda memiliki relasi "many-to-one" antara model EmissionPredict dan TipeKendaraan, ini berarti setiap catatan dalam model EmissionPredict dapat terkait dengan satu entitas dalam model TipeKendaraan, tetapi sebaliknya, satu entitas dalam model TipeKendaraan dapat terkait dengan banyak catatan dalam model EmissionPredict. Ini biasanya digunakan ketika Anda memiliki banyak catatan yang merujuk pada entitas tunggal.
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("tipe_kendaraan")
 }
