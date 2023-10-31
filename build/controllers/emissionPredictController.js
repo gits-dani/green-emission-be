@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
+const python_shell_1 = require("python-shell");
 class EmissionPredictController {
     constructor() {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -388,6 +389,38 @@ class EmissionPredictController {
                     status: "success",
                     message: "Berhasil menghapus satu data emission predict",
                     emissionPredictId: emissionPredictDeleted.id,
+                });
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
+        this.emissionPredict = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Menggunakan PythonShell untuk menjalankan script Python
+                python_shell_1.PythonShell.run("./src/utils/model_loader.py", undefined).then((result) => {
+                    // ambil nilai prediksi
+                    const emissionPredictValue = result[0];
+                    // validasi: grade berdasarkan nilai
+                    let status;
+                    if (emissionPredictValue > 120) {
+                        status = "Berbahaya";
+                    }
+                    else {
+                        status = "Aman";
+                    }
+                    // berikan response success
+                    res.json({
+                        status: "success",
+                        message: "Berhasil melakukan prediksi",
+                        data: {
+                            emisi: emissionPredictValue,
+                            status,
+                        },
+                    });
                 });
             }
             catch (error) {

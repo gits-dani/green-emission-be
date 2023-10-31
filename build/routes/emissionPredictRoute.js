@@ -12,4 +12,5 @@ route.get("/emission-predict", isAuthenticated_1.isAuthenticated, emissionPredic
 route.get("/emission-predict/:id", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.getOne);
 route.put("/emission-predict/:id", emissionPredictController_1.default.edit);
 route.delete("/emission-predict/:id", isAuthenticated_1.isAuthenticated, emissionPredictController_1.default.delete);
+route.get("/predict-emission", emissionPredictController_1.default.emissionPredict);
 exports.default = route;

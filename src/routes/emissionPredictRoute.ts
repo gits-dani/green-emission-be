@@ -24,4 +24,6 @@ route.delete(
   emissionPredictController.delete
 );
 
+route.get("/predict-emission", emissionPredictController.emissionPredict);
+
 export default route;

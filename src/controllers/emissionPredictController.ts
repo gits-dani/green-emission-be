@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import moment from "moment-timezone";
+import { PythonShell } from "python-shell";
 
 class EmissionPredictController {
   private prisma: PrismaClient;
@@ -464,6 +465,41 @@ class EmissionPredictController {
         message: "Berhasil menghapus satu data emission predict",
         emissionPredictId: emissionPredictDeleted.id,
       });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  };
+
+  emissionPredict = async (req: Request, res: Response) => {
+    try {
+      // Menggunakan PythonShell untuk menjalankan script Python
+      PythonShell.run("./src/utils/model_loader.py", undefined).then(
+        (result) => {
+          // ambil nilai prediksi
+          const emissionPredictValue = result[0];
+
+          // validasi: grade berdasarkan nilai
+          let status;
+          if (emissionPredictValue > 120) {
+            status = "Berbahaya";
+          } else {
+            status = "Aman";
+          }
+
+          // berikan response success
+          res.json({
+            status: "success",
+            message: "Berhasil melakukan prediksi",
+            data: {
+              emisi: emissionPredictValue,
+              status,
+            },
+          });
+        }
+      );
     } catch (error: any) {
       return res.status(500).json({
         status: "error",
