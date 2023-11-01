@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import moment from "moment-timezone";
 import { PythonShell } from "python-shell";
+import { modelPredict } from "../utils/modelPredict";
 
 class EmissionPredictController {
   private prisma: PrismaClient;
@@ -87,6 +88,18 @@ class EmissionPredictController {
       };
 
       // proses input ke model
+      const predict = await modelPredict(inputanModel);
+
+      // validasi: jika predict bukan array
+      if (!Array.isArray(predict)) {
+        return res.status(400).json({
+          status: "error",
+          message: "Prediksi tidak valid. Harap coba lagi.",
+        });
+      }
+
+      // ambil value dari prediksi
+      const [emisi, status] = predict;
 
       // proses membuat object dari data output model untuk dimasukkan ke db
       // waktu: untuk menentukan saat melakukan prediksi
@@ -102,8 +115,8 @@ class EmissionPredictController {
           },
         },
         ...inputanModel,
-        emisi: parseFloat("4.9"),
-        prediksi: "Aman",
+        emisi: parseFloat(emisi),
+        prediksi: status,
         waktu: waktuWIB,
         user: {
           connect: {

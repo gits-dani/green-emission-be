@@ -4,17 +4,13 @@ import { isAuthenticated } from "../middlewares/isAuthenticated";
 
 const route = Router();
 
-route.post("/emission-predict", isAuthenticated, emissionPredictController.add);
+route.post("/emission-predict", emissionPredictController.add);
 route.get(
   "/emission-predict",
   isAuthenticated,
   emissionPredictController.getAll
 );
-route.get(
-  "/emission-predict/:id",
-  isAuthenticated,
-  emissionPredictController.getOne
-);
+route.get("/emission-predict/:id", emissionPredictController.getOne);
 
 route.put("/emission-predict/:id", emissionPredictController.edit);
 

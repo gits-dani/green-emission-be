@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const python_shell_1 = require("python-shell");
+const modelPredict_1 = require("../utils/modelPredict");
 class EmissionPredictController {
     constructor() {
         this.add = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -75,6 +76,16 @@ class EmissionPredictController {
                     fuel_consumption_comb_mpg: parseFloat(fuel_consumption_comb_mpg),
                 };
                 // proses input ke model
+                const predict = yield (0, modelPredict_1.modelPredict)(inputanModel);
+                // validasi: jika predict bukan array
+                if (!Array.isArray(predict)) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "Prediksi tidak valid. Harap coba lagi.",
+                    });
+                }
+                // ambil value dari prediksi
+                const [emisi, status] = predict;
                 // proses membuat object dari data output model untuk dimasukkan ke db
                 // waktu: untuk menentukan saat melakukan prediksi
                 const waktuWIB = moment_timezone_1.default.utc().tz("Asia/Jakarta").format();
@@ -84,7 +95,7 @@ class EmissionPredictController {
                         connect: {
                             id: tipe_kendaraan_id,
                         },
-                    } }, inputanModel), { emisi: parseFloat("4.9"), prediksi: "Aman", waktu: waktuWIB, user: {
+                    } }, inputanModel), { emisi: parseFloat(emisi), prediksi: status, waktu: waktuWIB, user: {
                         connect: {
                             id: user_id,
                         },
