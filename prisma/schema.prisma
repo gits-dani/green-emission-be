@@ -40,9 +40,8 @@ model UserProfile {
 model EmissionPredict {
   id Int @id @default(autoincrement())
   nama_pemilik String
+  no_hp String
   no_plat String
-  tipe_kendaraan_id Int
-  tipe_kendaraan TipeKendaraan @relation(fields: [tipe_kendaraan_id], references: [id])
   engine_size Float
   cylinders Float
   fuel_consumption_city Float
@@ -60,15 +59,4 @@ model EmissionPredict {
   // Saat Anda memiliki relasi "many-to-one" antara model EmissionPredict dan TipeKendaraan, ini berarti setiap catatan dalam model EmissionPredict dapat terkait dengan satu entitas dalam model TipeKendaraan, tetapi sebaliknya, satu entitas dalam model TipeKendaraan dapat terkait dengan banyak catatan dalam model EmissionPredict. Ini biasanya digunakan ketika Anda memiliki banyak catatan yang merujuk pada entitas tunggal.
 
   @@map("emission_predict")
-}
-
-model TipeKendaraan {
-  id Int @id @default(autoincrement())
-  tipe String
-  emission_predict EmissionPredict[] // deklarasi hubungan antar tabel: dimana TipeKendaraan memiliki hubungan dengan EmissionPredict yaitu one to many
-  // Saat Anda memiliki relasi "many-to-one" antara model EmissionPredict dan TipeKendaraan, ini berarti setiap catatan dalam model EmissionPredict dapat terkait dengan satu entitas dalam model TipeKendaraan, tetapi sebaliknya, satu entitas dalam model TipeKendaraan dapat terkait dengan banyak catatan dalam model EmissionPredict. Ini biasanya digunakan ketika Anda memiliki banyak catatan yang merujuk pada entitas tunggal.
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("tipe_kendaraan")
 }

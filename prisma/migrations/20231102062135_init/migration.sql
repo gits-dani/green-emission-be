@@ -30,8 +30,8 @@ CREATE TABLE `user_profile` (
 CREATE TABLE `emission_predict` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nama_pemilik` VARCHAR(191) NOT NULL,
+    `no_hp` VARCHAR(191) NOT NULL,
     `no_plat` VARCHAR(191) NOT NULL,
-    `tipe_kendaraan_id` INTEGER NOT NULL,
     `engine_size` DOUBLE NOT NULL,
     `cylinders` DOUBLE NOT NULL,
     `fuel_consumption_city` DOUBLE NOT NULL,
@@ -48,21 +48,8 @@ CREATE TABLE `emission_predict` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable
-CREATE TABLE `tipe_kendaraan` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `tipe` VARCHAR(191) NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- AddForeignKey
 ALTER TABLE `user_profile` ADD CONSTRAINT `user_profile_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `emission_predict` ADD CONSTRAINT `emission_predict_tipe_kendaraan_id_fkey` FOREIGN KEY (`tipe_kendaraan_id`) REFERENCES `tipe_kendaraan`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `emission_predict` ADD CONSTRAINT `emission_predict_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
