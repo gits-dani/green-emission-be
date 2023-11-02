@@ -8,7 +8,7 @@ route.post("/emission-predict", emissionPredictController.add);
 route.get("/emission-predict", emissionPredictController.getAll);
 route.get("/emission-predict/:id", emissionPredictController.getOne);
 
-// route.put("/emission-predict/:id", emissionPredictController.edit);
+route.put("/emission-predict/:id", emissionPredictController.edit);
 
 route.delete(
   "/emission-predict/:id",

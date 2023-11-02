@@ -208,182 +208,163 @@ class EmissionPredictController {
                 });
             }
         });
-        // edit = async (req: Request, res: Response) => {
-        //   try {
-        //     // ambil id dari req.params.id
-        //     const id = parseInt(req.params.id);
-        //     // cek data di db
-        //     const emissionPredict = await this.prisma.emissionPredict.findUnique({
-        //       where: {
-        //         id,
-        //       },
-        //     });
-        //     // console.log(emissionPredict);
-        //     // validasi: jika data tidak ada
-        //     if (!emissionPredict) {
-        //       return res.status(404).json({
-        //         status: "error",
-        //         message: "Data emission predict tidak ditemukan",
-        //       });
-        //     }
-        //     // ambil data dari req.body
-        //     const {
-        //       nama_pemilik,
-        //       no_plat,
-        //       tipe_kendaraan_id,
-        //       engine_size,
-        //       cylinders,
-        //       fuel_consumption_city,
-        //       fuel_consumption_hwy,
-        //       fuel_consumption_comb,
-        //       fuel_consumption_comb_mpg,
-        //     } = req.body;
-        //     const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
-        //     // cek data tipe kendaraan di db
-        //     const tipe_kendaraan = await this.prisma.tipeKendaraan.findUnique({
-        //       where: {
-        //         id: parseInt(tipe_kendaraan_id),
-        //       },
-        //     });
-        //     // validasi: jika data tipe kendaraan tidak ada
-        //     if (!tipe_kendaraan) {
-        //       return res.status(404).json({
-        //         status: "error",
-        //         message: "Data tipe kendaraan tidak ditemukan",
-        //       });
-        //     }
-        //     // validasi: jika data ada yang berubah
-        //     // membandingkan data yang dikirim oleh user dari req.body dan data emissonPredict yang ada di db
-        //     // jika ada data inputan model seperti engine_size, cylinders dll yang dirubah maka masuk ke proses update data pertama, dan jika tidak ada data inputan model yang dirubah maka masuk ke proses update data kedua
-        //     const isNamaPemilikChanged =
-        //       nama_pemilik !== emissionPredict.nama_pemilik;
-        //     const isNoPlatChanged = no_plat !== emissionPredict.no_plat;
-        //     const isTipeKendaraanIdChanged =
-        //       parseFloat(tipe_kendaraan_id) !== emissionPredict.tipe_kendaraan_id;
-        //     const isEngineSizeChanged =
-        //       parseFloat(engine_size) !== emissionPredict.engine_size;
-        //     const isCylindersChanged =
-        //       parseFloat(cylinders) !== emissionPredict.cylinders;
-        //     const isFuelConsumptionCityChanged =
-        //       parseFloat(fuel_consumption_city) !==
-        //       emissionPredict.fuel_consumption_city;
-        //     const isFuelConsumtionHwyChanged =
-        //       parseFloat(fuel_consumption_hwy) !==
-        //       emissionPredict.fuel_consumption_hwy;
-        //     const isFuelConsumptionCombChanged =
-        //       parseFloat(fuel_consumption_comb) !==
-        //       emissionPredict.fuel_consumption_comb;
-        //     const isFuelConsumptionCombMpgChanged =
-        //       parseFloat(fuel_consumption_comb_mpg) !==
-        //       emissionPredict.fuel_consumption_comb_mpg;
-        //     console.log(
-        //       `${isEngineSizeChanged} || ${isCylindersChanged} || ${isFuelConsumptionCityChanged} || ${isFuelConsumtionHwyChanged} || ${isFuelConsumptionCombChanged} || ${isFuelConsumptionCombMpgChanged}`
-        //     );
-        //     // validasi: jika data inputan ke model machine learning dirubah
-        //     if (
-        //       isEngineSizeChanged ||
-        //       isCylindersChanged ||
-        //       isFuelConsumptionCityChanged ||
-        //       isFuelConsumtionHwyChanged ||
-        //       isFuelConsumptionCombChanged ||
-        //       isFuelConsumptionCombMpgChanged
-        //     ) {
-        //       // buat object inputan model
-        //       // melakukan pengecekan, jika data dirubah maka pakai data itu, jika tidak maka pakai data lama
-        //       const inputanModel = {
-        //         engine_size: isEngineSizeChanged
-        //           ? parseFloat(engine_size)
-        //           : emissionPredict?.engine_size || 0,
-        //         cylinders: isCylindersChanged
-        //           ? parseFloat(cylinders)
-        //           : emissionPredict?.cylinders || 0,
-        //         fuel_consumption_city: isFuelConsumptionCityChanged
-        //           ? parseFloat(fuel_consumption_city)
-        //           : emissionPredict?.fuel_consumption_city || 0,
-        //         fuel_consumption_hwy: isFuelConsumtionHwyChanged
-        //           ? parseFloat(fuel_consumption_hwy)
-        //           : emissionPredict?.fuel_consumption_hwy || 0,
-        //         fuel_consumption_comb: isFuelConsumptionCombChanged
-        //           ? parseFloat(fuel_consumption_comb)
-        //           : emissionPredict?.fuel_consumption_comb || 0,
-        //         fuel_consumption_comb_mpg: isFuelConsumptionCombMpgChanged
-        //           ? parseFloat(fuel_consumption_comb_mpg)
-        //           : emissionPredict?.fuel_consumption_comb_mpg || 0,
-        //       };
-        //       // object emission predict baru untuk data update
-        //       const newEmissionPredict = {
-        //         nama_pemilik: isNamaPemilikChanged
-        //           ? nama_pemilik
-        //           : emissionPredict?.nama_pemilik || "",
-        //         no_plat: isNoPlatChanged ? no_plat : emissionPredict?.no_plat || "",
-        //         tipe_kendaraan: {
-        //           connect: {
-        //             id: isTipeKendaraanIdChanged
-        //               ? parseInt(tipe_kendaraan_id)
-        //               : emissionPredict.tipe_kendaraan_id,
-        //           },
-        //         },
-        //         ...inputanModel,
-        //         emisi: 4.9,
-        //         prediksi: "Aman Update",
-        //         waktu: waktuWIB,
-        //       };
-        //       // proses memasukkan data ke model machine learning dan ambil outputnya untuk update data ke db
-        //       const updateEmissionPredict = await this.prisma.emissionPredict.update({
-        //         where: {
-        //           id,
-        //         },
-        //         data: newEmissionPredict,
-        //       });
-        //       // berikan response success
-        //       return res.json({
-        //         status: "success",
-        //         message: "Berhasil mengedit data emission predict",
-        //         emissionPredictId: updateEmissionPredict.id,
-        //       });
-        //     } else if (
-        //       isNamaPemilikChanged ||
-        //       isNoPlatChanged ||
-        //       isTipeKendaraanIdChanged
-        //     ) {
-        //       // object emission predict baru untuk data update
-        //       const newEmissionPredict = {
-        //         nama_pemilik: isNamaPemilikChanged
-        //           ? nama_pemilik
-        //           : emissionPredict?.nama_pemilik || "",
-        //         no_plat: isNoPlatChanged ? no_plat : emissionPredict?.no_plat || "",
-        //         tipe_kendaraan_id: isTipeKendaraanIdChanged
-        //           ? parseInt(tipe_kendaraan_id)
-        //           : emissionPredict?.tipe_kendaraan_id,
-        //       };
-        //       // proses update data
-        //       const updateEmissionPredict = await this.prisma.emissionPredict.update({
-        //         where: {
-        //           id,
-        //         },
-        //         data: newEmissionPredict,
-        //       });
-        //       // berikan response success
-        //       return res.json({
-        //         status: "success",
-        //         message: "Berhasil mengedit data emission predict",
-        //         emissionPredictId: updateEmissionPredict.id,
-        //       });
-        //     } else {
-        //       // berikan response success
-        //       return res.json({
-        //         status: "success",
-        //         message: "Berhasil mengedit data emission predict",
-        //         emissionPredictId: emissionPredict.id,
-        //       });
-        //     }
-        //   } catch (error: any) {
-        //     return res.status(500).json({
-        //       status: "error",
-        //       message: error.message,
-        //     });
-        //   }
-        // };
+        this.edit = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // ambil id dari req.params.id
+                const id = parseInt(req.params.id);
+                // cek data di db
+                const emissionPredict = yield this.prisma.emissionPredict.findUnique({
+                    where: {
+                        id,
+                    },
+                });
+                // console.log(emissionPredict);
+                // validasi: jika data tidak ada
+                if (!emissionPredict) {
+                    return res.status(404).json({
+                        status: "error",
+                        message: "Data emission predict tidak ditemukan",
+                    });
+                }
+                // ambil data dari req.body
+                const { nama_pemilik, no_hp, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, } = req.body;
+                const user_id = parseInt(req.body.user_id);
+                const waktuWIB = moment_timezone_1.default.utc().tz("Asia/Jakarta").format();
+                // validasi: jika data ada yang berubah
+                // membandingkan data yang dikirim oleh user dari req.body dan data emissonPredict yang ada di db
+                // jika ada data inputan model seperti engine_size, cylinders dll yang dirubah maka masuk ke proses update data pertama, dan jika tidak ada data inputan model yang dirubah maka masuk ke proses update data kedua
+                const isNamaPemilikChanged = nama_pemilik !== emissionPredict.nama_pemilik;
+                const isNoPlatChanged = no_plat !== emissionPredict.no_plat;
+                const isNoHpChanged = no_hp !== emissionPredict.no_hp;
+                const isEngineSizeChanged = parseFloat(engine_size) !== emissionPredict.engine_size;
+                const isCylindersChanged = parseFloat(cylinders) !== emissionPredict.cylinders;
+                const isFuelConsumptionCityChanged = parseFloat(fuel_consumption_city) !==
+                    emissionPredict.fuel_consumption_city;
+                const isFuelConsumtionHwyChanged = parseFloat(fuel_consumption_hwy) !==
+                    emissionPredict.fuel_consumption_hwy;
+                const isFuelConsumptionCombChanged = parseFloat(fuel_consumption_comb) !==
+                    emissionPredict.fuel_consumption_comb;
+                const isFuelConsumptionCombMpgChanged = parseFloat(fuel_consumption_comb_mpg) !==
+                    emissionPredict.fuel_consumption_comb_mpg;
+                const isUserIdChanged = user_id !== emissionPredict.user_id;
+                console.log(`${isEngineSizeChanged} || ${isCylindersChanged} || ${isFuelConsumptionCityChanged} || ${isFuelConsumtionHwyChanged} || ${isFuelConsumptionCombChanged} || ${isFuelConsumptionCombMpgChanged}`);
+                // validasi: jika no hp diganti dan no hp tidak valid
+                if (isNoHpChanged && !validator_1.default.isMobilePhone(no_hp, "id-ID")) {
+                    return res.status(400).json({
+                        status: "error",
+                        message: "No Hp tidak valid",
+                    });
+                }
+                // validasi: jika data inputan ke model machine learning dirubah
+                if (isEngineSizeChanged ||
+                    isCylindersChanged ||
+                    isFuelConsumptionCityChanged ||
+                    isFuelConsumtionHwyChanged ||
+                    isFuelConsumptionCombChanged ||
+                    isFuelConsumptionCombMpgChanged) {
+                    // buat object inputan model
+                    // melakukan pengecekan, jika data dirubah maka pakai data itu, jika tidak maka pakai data lama
+                    const inputanModel = {
+                        engine_size: isEngineSizeChanged
+                            ? parseFloat(engine_size)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.engine_size) || 0,
+                        cylinders: isCylindersChanged
+                            ? parseFloat(cylinders)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.cylinders) || 0,
+                        fuel_consumption_city: isFuelConsumptionCityChanged
+                            ? parseFloat(fuel_consumption_city)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_city) || 0,
+                        fuel_consumption_hwy: isFuelConsumtionHwyChanged
+                            ? parseFloat(fuel_consumption_hwy)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_hwy) || 0,
+                        fuel_consumption_comb: isFuelConsumptionCombChanged
+                            ? parseFloat(fuel_consumption_comb)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb) || 0,
+                        fuel_consumption_comb_mpg: isFuelConsumptionCombMpgChanged
+                            ? parseFloat(fuel_consumption_comb_mpg)
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.fuel_consumption_comb_mpg) || 0,
+                    };
+                    // proses prediksi emisi
+                    const predict = yield (0, modelPredict_1.modelPredict)(inputanModel);
+                    console.log(predict);
+                    // validaisi: jika predict bukan array
+                    if (!Array.isArray(predict)) {
+                        return res.status(400).json({
+                            status: "error",
+                            message: "Prediksi tidak valid. Harap coba lagi.",
+                        });
+                    }
+                    // ambil nilai dari hasil prediksi model
+                    const [emisi, status] = predict;
+                    // object emission predict baru untuk data update
+                    const newEmissionPredict = Object.assign(Object.assign({ nama_pemilik: isNamaPemilikChanged
+                            ? nama_pemilik
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.nama_pemilik) || "", no_hp: isNoHpChanged ? no_hp : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_hp) || "", no_plat: isNoPlatChanged ? no_plat : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_plat) || "" }, inputanModel), { emisi: Math.round(parseFloat(emisi) * 10) / 10, prediksi: status, waktu: waktuWIB, user: {
+                            connect: {
+                                id: isUserIdChanged ? user_id : emissionPredict.user_id,
+                            },
+                        } });
+                    // proses memasukkan data ke model machine learning dan ambil outputnya untuk update data ke db
+                    const updateEmissionPredict = yield this.prisma.emissionPredict.update({
+                        where: {
+                            id,
+                        },
+                        data: newEmissionPredict,
+                    });
+                    // berikan response success
+                    return res.json({
+                        status: "success",
+                        message: "Berhasil mengedit data emission predict",
+                        emissionPredictId: updateEmissionPredict.id,
+                    });
+                }
+                else if (isNamaPemilikChanged ||
+                    isNoPlatChanged ||
+                    isNoHpChanged ||
+                    isUserIdChanged) {
+                    // object emission predict baru untuk data update
+                    const newEmissionPredict = {
+                        nama_pemilik: isNamaPemilikChanged
+                            ? nama_pemilik
+                            : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.nama_pemilik) || "",
+                        no_hp: isNoHpChanged ? no_hp : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_hp) || "",
+                        no_plat: isNoPlatChanged ? no_plat : (emissionPredict === null || emissionPredict === void 0 ? void 0 : emissionPredict.no_plat) || "",
+                        user: {
+                            connect: {
+                                id: isUserIdChanged ? user_id : emissionPredict.user_id,
+                            },
+                        },
+                    };
+                    // proses update data
+                    const updateEmissionPredict = yield this.prisma.emissionPredict.update({
+                        where: {
+                            id,
+                        },
+                        data: newEmissionPredict,
+                    });
+                    // berikan response success
+                    return res.json({
+                        status: "success",
+                        message: "Berhasil mengedit data emission predict",
+                        emissionPredictId: updateEmissionPredict.id,
+                    });
+                }
+                else {
+                    // berikan response success
+                    return res.json({
+                        status: "success",
+                        message: "Berhasil mengedit data emission predict",
+                        emissionPredictId: emissionPredict.id,
+                    });
+                }
+            }
+            catch (error) {
+                return res.status(500).json({
+                    status: "error",
+                    message: error.message,
+                });
+            }
+        });
         this.delete = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // ambil id dari req.params.id
