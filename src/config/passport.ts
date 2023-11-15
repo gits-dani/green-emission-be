@@ -75,6 +75,16 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
+      // ambil confirmPassword
+      const confirmPassword = req.body.confirmPassword;
+
+      // validasi: jika data ada yang tidak diisi
+      if (!email || !password || !confirmPassword) {
+        return done(null, false, {
+          message: "Data email, password, dan confirmPassword harus diisi",
+        });
+      }
+
       // validasi: apakah email valid
       if (!validator.isEmail(email)) {
         return done(null, false, { message: "Email tidak valid" });
@@ -90,6 +100,13 @@ passport.use(
       // validasi: jika user sudah ada
       if (existingUser) {
         return done(null, false, { message: "User sudah ada" });
+      }
+
+      // validasi: jika password tidak sama
+      if (password !== confirmPassword) {
+        return done(null, false, {
+          message: "Password dam Confirm Password harus sama",
+        });
       }
 
       // hash password

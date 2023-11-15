@@ -10,5 +10,5 @@ const route = (0, express_1.Router)();
 route.post("/register", userController_1.default.register);
 route.post("/login", userController_1.default.login);
 route.get("/logout", isAuthenticated_1.isAuthenticated, userController_1.default.logout);
-route.post("/change-password", isAuthenticated_1.isAuthenticated, userController_1.default.changePassword);
+route.post("/change-password", userController_1.default.changePassword);
 exports.default = route;

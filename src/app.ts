@@ -1,6 +1,8 @@
 import express, { Express } from "express";
 import session from "express-session";
 import passport from "./config/passport";
+import "dotenv/config";
+import cors from "cors";
 
 import userRoute from "./routes/userRoute";
 import userProfileRoute from "./routes/userProfileRoute";
@@ -10,7 +12,9 @@ const app: Express = express();
 const port = 3000;
 
 // middleware
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: false })); // Tambahkan ini untuk meng-handle form-data
 
 app.use(
   session({

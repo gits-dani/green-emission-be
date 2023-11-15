@@ -96,7 +96,11 @@ class EmissionPredictController {
 
       // proses membuat object dari data output model untuk dimasukkan ke db
       // waktu: untuk menentukan saat melakukan prediksi
-      const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
+      // const waktuWIB = moment.utc().format();
+      const waktuWIB = moment().locale("id").format();
+      // console.log("###");
+      // console.log(waktuWIB);
+      // console.log("###");
 
       // object inputan emissionPredict db
       const newEmissionPredict = {
@@ -157,6 +161,7 @@ class EmissionPredictController {
                 select: {
                   nama: true,
                   no_hp: true,
+                  foto_profil: true,
                 },
               },
             },
@@ -208,6 +213,7 @@ class EmissionPredictController {
                 select: {
                   nama: true,
                   no_hp: true,
+                  foto_profil: true,
                 },
               },
             },
@@ -271,7 +277,10 @@ class EmissionPredictController {
         fuel_consumption_comb_mpg,
       } = req.body;
       const user_id = parseInt(req.body.user_id);
-      const waktuWIB = moment.utc().tz("Asia/Jakarta").format();
+      const waktuWIB = moment().locale("id").format();
+      console.log("###");
+      console.log(waktuWIB);
+      console.log("###");
 
       // validasi: jika data ada yang berubah
       // membandingkan data yang dikirim oleh user dari req.body dan data emissonPredict yang ada di db

@@ -40,7 +40,7 @@ class UserController {
         return res.status(201).json({
           status: "success",
           message: "Registrasi berhasil",
-          user,
+          userId: user.id,
         });
       }
     )(req, res, next);
@@ -85,7 +85,7 @@ class UserController {
         return res.json({
           status: "success",
           message: "Login berhasil",
-          user,
+          userId: user.id,
         });
       });
     })(req, res, next);
@@ -135,14 +135,14 @@ class UserController {
       }
 
       // ambil data password
-      const { passwordLama, passwordBaru, confPasswordBaru } = req.body;
+      const { passwordLama, passwordBaru, confirmPasswordBaru } = req.body;
 
       // validasi: jika tidak mengirimkan data lengkap
-      if (!passwordLama || !passwordBaru || !confPasswordBaru) {
+      if (!passwordLama || !passwordBaru || !confirmPasswordBaru) {
         return res.status(400).json({
           status: "error",
           message:
-            "Data passwordLama, passwordBaru, confPasswordBaru harus diisi",
+            "Data passwordLama, passwordBaru, confirmPasswordBaru harus diisi",
         });
       }
 
@@ -161,7 +161,7 @@ class UserController {
       }
 
       // validasi: compare password baru
-      if (passwordBaru !== confPasswordBaru) {
+      if (passwordBaru !== confirmPasswordBaru) {
         return res.status(400).json({
           status: "error",
           message: "Password baru tidak sama",
