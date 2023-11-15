@@ -139,35 +139,103 @@ class EmissionPredictController {
 
   getAll = async (req: Request, res: Response) => {
     try {
-      // proses ambil semua data
-      const emissionPredict = await this.prisma.emissionPredict.findMany({
-        select: {
-          id: true,
-          nama_pemilik: true,
-          no_hp: true,
-          no_plat: true,
-          engine_size: true,
-          cylinders: true,
-          fuel_consumption_city: true,
-          fuel_consumption_hwy: true,
-          fuel_consumption_comb: true,
-          fuel_consumption_comb_mpg: true,
-          emisi: true,
-          prediksi: true,
-          waktu: true,
-          user: {
-            select: {
-              user_profile: {
-                select: {
-                  nama: true,
-                  no_hp: true,
-                  foto_profil: true,
+      // ambil bulan dan tahun dari req.query
+      const { bulan, tahun } = req.query;
+
+      // inisialisasi variabel emissionPredict
+      let emissionPredict;
+
+      // validasi: jika user mengirimkan bulan dan tahun
+      if (bulan && tahun) {
+        // parsing ke int
+        const tahunInt = +tahun;
+        const bulanInt = +bulan;
+
+        // validasi: jika inputan bulan atau tahun tidak valid
+        if (
+          isNaN(tahunInt) ||
+          isNaN(bulanInt) ||
+          bulanInt < 1 ||
+          bulanInt > 12
+        ) {
+          return res.status(400).json({
+            status: "error",
+            message: "Inputan bulan atau tahun tidak valid",
+          });
+        }
+
+        const startDate = new Date(`${tahun}-0${bulan}-01T00:00:00.000Z`);
+        const endDate = new Date(`${tahun}-0${bulan}-31T23:59:59.000Z`);
+
+        // console.log(startDate);
+        // console.log(endDate);
+
+        // proses ambil semua data
+        emissionPredict = await this.prisma.emissionPredict.findMany({
+          where: {
+            waktu: {
+              gte: startDate,
+              lt: endDate,
+            },
+          },
+          select: {
+            id: true,
+            nama_pemilik: true,
+            no_hp: true,
+            no_plat: true,
+            engine_size: true,
+            cylinders: true,
+            fuel_consumption_city: true,
+            fuel_consumption_hwy: true,
+            fuel_consumption_comb: true,
+            fuel_consumption_comb_mpg: true,
+            emisi: true,
+            prediksi: true,
+            waktu: true,
+            user: {
+              select: {
+                user_profile: {
+                  select: {
+                    nama: true,
+                    no_hp: true,
+                    foto_profil: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
+        });
+      } else {
+        // proses ambil semua data
+        emissionPredict = await this.prisma.emissionPredict.findMany({
+          select: {
+            id: true,
+            nama_pemilik: true,
+            no_hp: true,
+            no_plat: true,
+            engine_size: true,
+            cylinders: true,
+            fuel_consumption_city: true,
+            fuel_consumption_hwy: true,
+            fuel_consumption_comb: true,
+            fuel_consumption_comb_mpg: true,
+            emisi: true,
+            prediksi: true,
+            waktu: true,
+            user: {
+              select: {
+                user_profile: {
+                  select: {
+                    nama: true,
+                    no_hp: true,
+                    foto_profil: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
 
       // berikan response success
       return res.json({
