@@ -140,10 +140,21 @@ class EmissionPredictController {
   getAll = async (req: Request, res: Response) => {
     try {
       // ambil bulan dan tahun dari req.query
-      const { bulan, tahun } = req.query;
+      const { bulan, tahun, limit } = req.query;
 
       // inisialisasi variabel emissionPredict
       let emissionPredict;
+
+      // validasi: jika limit bukan angka
+      if (limit && (isNaN(+limit) || +limit <= 0)) {
+        return res.status(400).json({
+          status: "error",
+          message: "Limit harus berupa angka positif",
+        });
+      }
+
+      // conversi limit ke int
+      const limitInt = +limit!;
 
       // validasi: jika user mengirimkan bulan dan tahun
       if (bulan && tahun) {
@@ -164,14 +175,15 @@ class EmissionPredictController {
           });
         }
 
-        const startDate = new Date(`${tahun}-0${bulan}-01T00:00:00.000Z`);
-        const endDate = new Date(`${tahun}-0${bulan}-31T23:59:59.000Z`);
+        const startDate = new Date(`${tahun}-${bulan}-01T00:00:00.000Z`);
+        const endDate = new Date(`${tahun}-${bulan}-31T23:59:59.000Z`);
 
         // console.log(startDate);
         // console.log(endDate);
 
         // proses ambil semua data
         emissionPredict = await this.prisma.emissionPredict.findMany({
+          take: limitInt || undefined,
           where: {
             waktu: {
               gte: startDate,
@@ -208,6 +220,7 @@ class EmissionPredictController {
       } else {
         // proses ambil semua data
         emissionPredict = await this.prisma.emissionPredict.findMany({
+          take: limitInt || undefined,
           select: {
             id: true,
             nama_pemilik: true,
