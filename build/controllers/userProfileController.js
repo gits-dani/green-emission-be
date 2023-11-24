@@ -24,7 +24,7 @@ class UserProfileController {
         this.add2 = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 // ambil data user_id dan konversi ke number pake op unary;
-                console.log(req.body);
+                // console.log(req.body);
                 const user_id = +req.body.user_id;
                 // console.log(user_id);
                 // Cari user di database
@@ -235,7 +235,7 @@ class UserProfileController {
             try {
                 // ambil id user
                 const user_id = parseInt(req.body.user_id);
-                console.log(user_id);
+                // console.log(user_id);
                 // cek user berdasarkan user_id
                 const user = yield this.prisma.user.findUnique({
                     where: {

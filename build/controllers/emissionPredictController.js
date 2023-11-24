@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
-const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const validator_1 = __importDefault(require("validator"));
 const modelPredict_1 = require("../utils/modelPredict");
 class EmissionPredictController {
@@ -81,11 +80,8 @@ class EmissionPredictController {
                 const [emisi, status] = predict;
                 // proses membuat object dari data output model untuk dimasukkan ke db
                 // waktu: untuk menentukan saat melakukan prediksi
-                // const waktuWIB = moment.utc().format();
-                const waktuWIB = (0, moment_timezone_1.default)().locale("id").format();
-                // console.log("###");
-                // console.log(waktuWIB);
-                // console.log("###");
+                const waktuWIB = new Date();
+                waktuWIB.setHours(waktuWIB.getHours() + 7);
                 // object inputan emissionPredict db
                 const newEmissionPredict = Object.assign(Object.assign({ nama_pemilik,
                     no_hp,
@@ -307,10 +303,8 @@ class EmissionPredictController {
                 // ambil data dari req.body
                 const { nama_pemilik, no_hp, no_plat, engine_size, cylinders, fuel_consumption_city, fuel_consumption_hwy, fuel_consumption_comb, fuel_consumption_comb_mpg, } = req.body;
                 const user_id = parseInt(req.body.user_id);
-                const waktuWIB = (0, moment_timezone_1.default)().locale("id").format();
-                console.log("###");
-                console.log(waktuWIB);
-                console.log("###");
+                const waktuWIB = new Date();
+                waktuWIB.setHours(waktuWIB.getHours() + 7);
                 // validasi: jika data ada yang berubah
                 // membandingkan data yang dikirim oleh user dari req.body dan data emissonPredict yang ada di db
                 // jika ada data inputan model seperti engine_size, cylinders dll yang dirubah maka masuk ke proses update data pertama, dan jika tidak ada data inputan model yang dirubah maka masuk ke proses update data kedua
@@ -369,7 +363,7 @@ class EmissionPredictController {
                     };
                     // proses prediksi emisi
                     const predict = yield (0, modelPredict_1.modelPredict)(inputanModel);
-                    console.log(predict);
+                    // console.log(predict);
                     // validaisi: jika predict bukan array
                     if (!Array.isArray(predict)) {
                         return res.status(400).json({

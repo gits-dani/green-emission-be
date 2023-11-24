@@ -7,6 +7,6 @@ const route = Router();
 route.post("/register", userController.register);
 route.post("/login", userController.login);
 route.get("/logout", isAuthenticated, userController.logout);
-route.post("/change-password", userController.changePassword);
+route.post("/change-password", isAuthenticated, userController.changePassword);
 
 export default route;

@@ -7,12 +7,14 @@ const route = Router();
 
 route.post(
   "/user-profile",
+  isAuthenticated,
   upload.single("foto_profil"),
   UserProfileController.add
 );
-route.get("/user-profile/:user_id", UserProfileController.get);
+route.get("/user-profile/:user_id", isAuthenticated, UserProfileController.get);
 route.post(
   "/user-profile/upload-foto-profil",
+  isAuthenticated,
   upload.single("foto_profil"),
   UserProfileController.addFotoProfil
 );
